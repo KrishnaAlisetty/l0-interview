@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="basic.css">
+</head>
+<body>
+<form id="loginForm" class="form-container">
+    <div class="title">
+        <h2 class="form-title">Login</h2>
+    </div>
+    <div class="form-group">
+        <label for="email">Candidate Name</label>
+        <input type="email" id="email" placeholder="Email" required />
+    </div>
+    <div class="form-group" >
+        <label for="role">Candidate Email</label>
+        <select id="role" class="custom-select">
+            <option value="CANDIDATE">Candidate</option>
+            <option value="INTERVIEWER">Interviewer</option>
+        </select>
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    document.getElementById("loginForm").onsubmit = async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const role = document.getElementById("role").value;
+
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, role })
+      });
+
+      const data = await res.json();
+
+      localStorage.setItem("jwt", data.token);
+
+      window.location.href =
+        role === "CANDIDATE" ? "/candidate" : "/interviewer";
+    };
+</script>
+
+</body>
+</html>
