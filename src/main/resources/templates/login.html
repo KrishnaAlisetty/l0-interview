@@ -11,11 +11,15 @@
         <h2 class="form-title">Login</h2>
     </div>
     <div class="form-group">
-        <label for="email">Candidate Name</label>
+        <label for="email">Candidate Email</label>
         <input type="email" id="email" placeholder="Email" required />
     </div>
+    <div class="form-group" id="interviewerEmailDiv">
+        <label for="email">Interviewer Email</label>
+        <input type="email" id="interviewerEmail" placeholder="Email" required />
+    </div>
     <div class="form-group" >
-        <label for="role">Candidate Email</label>
+        <label for="role">Role</label>
         <select id="role" class="custom-select">
             <option value="CANDIDATE">Candidate</option>
             <option value="INTERVIEWER">Interviewer</option>
@@ -26,26 +30,34 @@
 </form>
 
 <script>
-    document.getElementById("loginForm").onsubmit = async (e) => {
-      e.preventDefault();
+    document.getElementById('interviewerEmailDiv').style.display = 'none';
+   document.getElementById("role").onchange = (e) => {
+   e.preventDefault();
+   let value = e.currentTarget.value;
+   if('INTERVIEWER' === value) {
+       document.getElementById('interviewerEmailDiv').style.display = "";
+   }
+   }
+   document.getElementById("loginForm").onsubmit = async (e) => {
+     e.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const role = document.getElementById("role").value;
+     const email = document.getElementById("email").value;
+     const role = document.getElementById("role").value;
 
-      const res = await fetch("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, role })
-      });
+     const res = await fetch("/auth/login", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ email, role })
+     });
 
-      const data = await res.json();
+     const data = await res.json();
 
-      localStorage.setItem("jwt", data.token);
-      localStorage.setItem("roomId", data.roomId);
+     localStorage.setItem("jwt", data.token);
+     localStorage.setItem("roomId", data.roomId);
 
-      window.location.href =
-        role === "CANDIDATE" ? "/candidate" : "/interviewer";
-    };
+     window.location.href =
+       role === "CANDIDATE" ? "/candidate" : "/interviewer";
+   };
 </script>
 
 </body>
