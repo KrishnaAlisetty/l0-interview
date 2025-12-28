@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WebRTC Full Working</title>
+    <style>
+        video {
+          width: 45%;
+          border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<h3>WebRTC Call</h3>
+
+<button id="start">Start Camera</button>
+<button id="offer">Create Offer</button>
+
+<br /><br />
+<video id="localVideo" autoplay muted playsinline></video>
+<video id="remoteVideo" autoplay playsinline></video>
+
+<script th:inline="javascript">
+    let socket;
+    let pc;
+    let pendingOffer = null;
+    const ROOM_ID = localStorage.getItem('roomId');
+    let setIceOneTime;
+
+    // 🔥 ICE buffering state
+    let pendingIceCandidates = [];
+    let remoteDescriptionSet = false;
+    let setIceCandidate = false;
+
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+
+      let token = localStorage.getItem("jwt");
+    // -------------------- START CAMERA --------------------
+    document.getElementById("start").onclick = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localVideo.srcObject = stream;
+
+      socket = new WebSocket(`wss://${window.location.host}/signal?token=` + token);
+
+      pc = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      });
+
+     stream.getTracks().forEach((t) => {
+            pc.addTrack(t, stream);
+        });
+
+        pc.ontrack = async (e) => {
+            console.log("from track", e);
+            remoteVideo.srcObject = e.streams[0];
+        };
+
+        pc.onicecandidate = (e) => {
+            if (e.candidate && !setIceOneTime) {
+                socket.send(
+                    JSON.stringify({
+                        type: "ice",
+                        room: ROOM_ID,
+                        candidate: e.candidate,
+                    })
+                );
+				setIceOneTime = true;
+            }
+        };
+
+        socket.onopen = async (e) => {
+            console.log("Socket opened");
+			socket.send(JSON.stringify({
+				type: "join",
+				room: ROOM_ID
+			}));
+
+        };
+
+        socket.onmessage = async (e) => {
+            let data = JSON.parse(e.data);
+			console.log("fddfdfd");
+			if(pc.signalingState !== "have-remote-offer"){
+				console.log("Invalid State", pc.signalingState);
+			}
+
+			console.log(data.type);
+            if (data.type === "offer") {
+
+                console.log("sdp", data.sdp);
+
+				await pc.setRemoteDescription({
+					type: "offer",
+					sdp: data.sdp
+				});
+
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+
+                socket.send(JSON.stringify({
+                    type: "answer",
+                    room: ROOM_ID,
+                    sdp: answer.sdp
+                }));
+            }
+        };
+    };
+</script>
+</body>
+</html>

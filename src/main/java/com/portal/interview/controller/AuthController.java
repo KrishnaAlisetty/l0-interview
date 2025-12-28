@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +45,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, Model model) {
         String email = loginRequest.email();
+        String interviewerEmail = loginRequest.interviewerEmail();
         String role = loginRequest.role();
         Candidate candidate;
 
@@ -57,21 +59,28 @@ public class AuthController {
         candidate = optionalCandidate.get();
 
 
-        Optional<InterviewDetails> interviewProcess = interviewDetailsService.interviewProcessByInitiated(email);
+        List<InterviewDetails> interviewProcesses = interviewDetailsService.interviewProcessByInitiatedOrOngoing(email);
 
-        if (interviewProcess.isPresent()) {
-            InterviewDetails  interviewDetails = interviewProcess.get();
-
-            interviewDetailsService.update(interviewDetails);
-            return ResponseEntity.ok(Map.of("token", interviewProcess.get().getJwt()));
+        boolean isInterviewOngoing = interviewProcesses.stream().anyMatch(v -> v.getInterviewStatus().equals(InterviewStatus.ON_GOING));
+        InterviewDetails interviewDetails = interviewProcesses.stream().filter(v -> v.getInterviewStatus().equals(InterviewStatus.INITIATED)).findFirst().orElse(null);
+        if(isInterviewOngoing) {
+            throw new IllegalStateException("Interview is happen with candidate who is associated with provided email id");
+        }
+        if (interviewDetails != null) {
+            interviewDetails.setStartedAt(LocalDateTime.now());
+            interviewDetails.setInterviewerEmail(interviewerEmail);
+            interviewDetailsService.updateOnInterviewerJoin(interviewDetails);
+            return ResponseEntity.ok(Map.of("token", interviewDetails.getJwt(), "roomId", interviewDetails.getRoomId()));
         }
 
         String roomId = roomService.createRoomId();
         String token  = jwtService.generateToken(candidate.getId().toString(), email, role, roomId);
 
-        InterviewDetails interviewDetails = new InterviewDetails();
+        interviewDetails = new InterviewDetails();
         interviewDetails.setCandidate(candidate);
-        if (role.equals(Roles.CANDIDATE.getRole())) {
+        interviewDetails.setJwt(token);
+        interviewDetails.setRoomId(roomId);
+        if (role.equalsIgnoreCase(Roles.CANDIDATE.getRole())) {
             interviewDetails.setCandidate(candidate);
             interviewDetails.setInitiatedBy(Roles.CANDIDATE);
         } else {
@@ -81,6 +90,9 @@ public class AuthController {
         interviewDetails.setInterviewStatus(InterviewStatus.INITIATED);
         interviewDetails.setCreatedAt(LocalDateTime.now());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        interviewDetailsService.create(interviewDetails);
+
+        model.addAttribute("room_id", roomId);
+        return ResponseEntity.ok(Map.of("token", token, "roomId", roomId));
     }
 }

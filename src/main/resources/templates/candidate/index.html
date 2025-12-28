@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WebRTC Full Working</title>
+    <style>
+        video {
+          width: 45%;
+          border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<h3>WebRTC Call</h3>
+
+<button id="start">Start Camera</button>
+<button id="offer">Create Offer</button>
+
+<br /><br />
+<video id="localVideo" autoplay muted playsinline></video>
+<video id="remoteVideo" autoplay playsinline></video>
+
+<script th:inline="javascript">
+    let socket;
+    let pc;
+    let pendingOffer = null;
+    const ROOM_ID = localStorage.getItem('roomId');
+
+    // 🔥 ICE buffering state
+    let pendingIceCandidates = [];
+    let remoteDescriptionSet = false;
+    let setIceCandidate = false;
+
+    let token = localStorage.getItem("jwt");
+    console.log("Token---->", token);
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+
+    // -------------------- START CAMERA --------------------
+    document.getElementById("start").onclick = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localVideo.srcObject = stream;
+
+      socket = new WebSocket(`wss://${window.location.host}/signal?token=` + token);
+
+      pc = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      });
+
+      stream.getTracks().forEach((t) => {
+          pc.addTrack(t, stream);
+        });
+
+        pc.ontrack = async (e) => {
+          console.log("from track", e);
+          remoteVideo.srcObject = e.streams[0];
+        };
+
+        pc.onicecandidate = (e) => {
+          if (e.candidate && !setIceCandidate) {
+            socket.send(
+              JSON.stringify({
+                type: "ice",
+                room: ROOM_ID,
+                candidate: e.candidate,
+              })
+            );
+            setIceCandidate = true;
+          }
+        };
+
+        socket.onopen = async (e) => {
+          console.log("Socket opened");
+	socket.send(JSON.stringify({
+				type: "candidate-join",
+				room: ROOM_ID
+			}));
+        };
+
+        socket.onmessage = async (e) => {
+          let data = JSON.parse(e.data);
+
+          console.log(data.type);
+          if(data.type == 'join') {
+          let offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+
+          socket.send(
+            JSON.stringify({
+              type: "offer",
+              room: ROOM_ID,
+              sdp: offer.sdp,
+            })
+          );
+          }
+          if (data.type === "answer") {
+            await pc.setRemoteDescription({
+              type: "answer",
+              sdp: data.sdp,
+            });
+          }
+
+          if (data.type === "ice") {
+            await pc.addIceCandidate(data.candidate);
+          }
+        };
+    };
+</script>
+</body>
+</html>

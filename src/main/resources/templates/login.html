@@ -41,6 +41,7 @@
       const data = await res.json();
 
       localStorage.setItem("jwt", data.token);
+      localStorage.setItem("roomId", data.roomId);
 
       window.location.href =
         role === "CANDIDATE" ? "/candidate" : "/interviewer";

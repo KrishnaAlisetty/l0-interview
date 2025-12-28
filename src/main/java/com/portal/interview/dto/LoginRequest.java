@@ -5,5 +5,5 @@
 
 package com.portal.interview.dto;
 
-public record LoginRequest(String email, String role) {
+public record LoginRequest(String email, String role, String interviewerEmail) {
 }

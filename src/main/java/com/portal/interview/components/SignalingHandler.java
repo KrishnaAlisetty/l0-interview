@@ -32,6 +32,7 @@ public class SignalingHandler extends TextWebSocketHandler {
         String role = (String) session.getAttributes().get("role");
         String userId = (String) session.getAttributes().get("userId");
 
+        System.out.println("Room iD--" + room);
         // Safety check (should never fail)
         if (room == null) {
             session.close();
@@ -39,18 +40,11 @@ public class SignalingHandler extends TextWebSocketHandler {
         }
 
         rooms.computeIfAbsent(room, r -> ConcurrentHashMap.newKeySet());
-
+        rooms.get(room).add(session);
         for (WebSocketSession peer : rooms.get(room)) {
             if (!peer.getId().equals(session.getId())) {
                 peer.sendMessage(message);
             }
-        }
-        // Relay signaling messages
-        for (WebSocketSession peer : rooms.get(room)) {
-            if (!peer.getId().equals(session.getId()) && peer.isOpen()) {
-                peer.sendMessage(message);
-            }
-
         }
     }
 

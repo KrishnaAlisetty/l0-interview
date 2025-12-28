@@ -19,6 +19,7 @@ public class InterviewDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 500)
     private String jwt;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "interview_status")
@@ -32,6 +33,7 @@ public class InterviewDetails {
     private String interviewerEmail;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    private String roomId;
 
     @Column(name = "started_at")
     private LocalDateTime startedAt;
@@ -118,5 +120,13 @@ public class InterviewDetails {
 
     public void setEndedAt(LocalDateTime endedAt) {
         this.endedAt = endedAt;
+    }
+
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 }
