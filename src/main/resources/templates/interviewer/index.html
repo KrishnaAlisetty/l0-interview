@@ -1,113 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>WebRTC Full Working</title>
-    <style>
-        video {
-          width: 45%;
-          border: 1px solid black;
-        }
-    </style>
-</head>
-<body>
-<h3>WebRTC Call</h3>
+    <head>
+        <title>WebRTC Full Working</title>
+        <style>
+            video {
+                width: 45%;
+                border: 1px solid black;
+            }
+        </style>
+        <link rel="stylesheet" href="interview.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <h3>WebRTC Call</h3>
 
-<button id="start">Start Camera</button>
-<button id="offer">Create Offer</button>
+        <button id="start">Start Camera</button>
+        <button id="offer">Create Offer</button>
 
-<br /><br />
-<video id="localVideo" autoplay muted playsinline></video>
-<video id="remoteVideo" autoplay playsinline></video>
+        <br /><br />
+        <video id="localVideo" autoplay muted playsinline></video>
+        <video id="remoteVideo" autoplay playsinline></video>
 
-<script th:inline="javascript">
-    let socket;
-    let pc;
-    let pendingOffer = null;
-    const ROOM_ID = localStorage.getItem('roomId');
-    let setIceOneTime;
+        <script th:inline="javascript">
+            let socket;
+            let pc;
+            let pendingOffer = null;
+            const ROOM_ID = localStorage.getItem("roomId");
+            let setIceOneTime;
 
-    // 🔥 ICE buffering state
-    let pendingIceCandidates = [];
-    let remoteDescriptionSet = false;
-    let setIceCandidate = false;
+            // 🔥 ICE buffering state
+            let pendingIceCandidates = [];
+            let remoteDescriptionSet = false;
+            let setIceCandidate = false;
 
-    const localVideo = document.getElementById("localVideo");
-    const remoteVideo = document.getElementById("remoteVideo");
+            const localVideo = document.getElementById("localVideo");
+            const remoteVideo = document.getElementById("remoteVideo");
 
-      let token = localStorage.getItem("jwt");
-    // -------------------- START CAMERA --------------------
-    document.getElementById("start").onclick = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      localVideo.srcObject = stream;
+            let token = localStorage.getItem("jwt");
+            // -------------------- START CAMERA --------------------
+            document.getElementById("start").onclick = async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                });
+                localVideo.srcObject = stream;
 
-      socket = new WebSocket(`wss://${window.location.host}/signal?token=` + token);
-
-      pc = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-      });
-
-     stream.getTracks().forEach((t) => {
-            pc.addTrack(t, stream);
-        });
-
-        pc.ontrack = async (e) => {
-            console.log("from track", e);
-            remoteVideo.srcObject = e.streams[0];
-        };
-
-        pc.onicecandidate = (e) => {
-            if (e.candidate && !setIceOneTime) {
-                socket.send(
-                    JSON.stringify({
-                        type: "ice",
-                        room: ROOM_ID,
-                        candidate: e.candidate,
-                    })
+                socket = new WebSocket(
+                    `wss://${window.location.host}/signal?token=` + token,
                 );
-				setIceOneTime = true;
-            }
-        };
 
-        socket.onopen = async (e) => {
-            console.log("Socket opened");
-			socket.send(JSON.stringify({
-				type: "join",
-				room: ROOM_ID
-			}));
+                pc = new RTCPeerConnection({
+                    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+                });
 
-        };
+                stream.getTracks().forEach((t) => {
+                    pc.addTrack(t, stream);
+                });
 
-        socket.onmessage = async (e) => {
-            let data = JSON.parse(e.data);
-			console.log("fddfdfd");
-			if(pc.signalingState !== "have-remote-offer"){
-				console.log("Invalid State", pc.signalingState);
-			}
+                pc.ontrack = async (e) => {
+                    console.log("from track", e);
+                    remoteVideo.srcObject = e.streams[0];
+                };
 
-			console.log(data.type);
-            if (data.type === "offer") {
+                pc.onicecandidate = (e) => {
+                    if (e.candidate && !setIceOneTime) {
+                        socket.send(
+                            JSON.stringify({
+                                type: "ice",
+                                room: ROOM_ID,
+                                candidate: e.candidate,
+                            }),
+                        );
+                        setIceOneTime = true;
+                    }
+                };
 
-                console.log("sdp", data.sdp);
+                socket.onopen = async (e) => {
+                    console.log("Socket opened");
+                    socket.send(
+                        JSON.stringify({
+                            type: "join",
+                            room: ROOM_ID,
+                        }),
+                    );
+                };
 
-				await pc.setRemoteDescription({
-					type: "offer",
-					sdp: data.sdp
-				});
+                socket.onmessage = async (e) => {
+                    let data = JSON.parse(e.data);
+                    console.log("fddfdfd");
+                    if (pc.signalingState !== "have-remote-offer") {
+                        console.log("Invalid State", pc.signalingState);
+                    }
 
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
+                    console.log(data.type);
+                    if (data.type === "offer") {
+                        console.log("sdp", data.sdp);
 
-                socket.send(JSON.stringify({
-                    type: "answer",
-                    room: ROOM_ID,
-                    sdp: answer.sdp
-                }));
-            }
-        };
-    };
-</script>
-</body>
+                        await pc.setRemoteDescription({
+                            type: "offer",
+                            sdp: data.sdp,
+                        });
+
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+
+                        socket.send(
+                            JSON.stringify({
+                                type: "answer",
+                                room: ROOM_ID,
+                                sdp: answer.sdp,
+                            }),
+                        );
+                    }
+                };
+            };
+        </script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+        ></script>
+    </body>
 </html>
