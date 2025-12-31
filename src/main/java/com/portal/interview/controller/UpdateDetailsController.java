@@ -1,20 +1,40 @@
 package com.portal.interview.controller;
 
+import com.portal.interview.dto.CandidateProfile;
 import com.portal.interview.dto.UploadDetails;
+import com.portal.interview.entity.Candidate;
+import com.portal.interview.service.DomainResolverService;
+import com.portal.interview.service.ExtractInfoService;
+import com.portal.interview.service.ResumeParsingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/update")
 public class UpdateDetailsController {
 
-    @PostMapping(value = "/interviewinfo", consumes = "multipart/form-data")
+    private ResumeParsingService resumeParsingService;
+    private ExtractInfoService extractInfoService;
+    private DomainResolverService domainResolverService;
+
+    @Autowired
+    public UpdateDetailsController(ResumeParsingService resumeParsingService, ExtractInfoService extractInfoService, DomainResolverService domainResolverService) {
+        this.resumeParsingService = resumeParsingService;
+        this.extractInfoService = extractInfoService;
+        this.domainResolverService = domainResolverService;
+    }
+
+    @PostMapping(value = "/details", consumes = "multipart/form-data")
     public String handleFileUpload(UploadDetails uploadDetails) {
-        // Handle file upload logic here
-        System.out.println(uploadDetails.candidateName());
+        String resumeText = resumeParsingService.parseResume(
+            uploadDetails.file()
+        );
+
+        Candidate candidate = extractInfoService.extractResumeInfo(resumeText);
+        domainResolverService.resolveAndUpdateDomain(candidate);
+        System.out.println(resumeText.contains("phanilanka32@gmail.com"));
         return "{\"status\": \"success\", \"message\": \"File uploaded successfully\"}";
     }
 }

@@ -7,7 +7,6 @@ package com.portal.interview.config;
 
 import com.portal.interview.service.JwtService;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;

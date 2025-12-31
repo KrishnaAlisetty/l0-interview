@@ -1,6 +1,5 @@
 package com.portal.interview.dto;
 
-import com.portal.interview.dto.SchedulerInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 public record UploadDetails(
