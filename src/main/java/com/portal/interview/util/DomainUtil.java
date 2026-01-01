@@ -25,7 +25,7 @@ public class DomainUtil {
         TechnicalDomainSkills.getSkills().forEach((domain, skills) -> {
             long matchedSkills = skills.stream().map(String::toLowerCase).filter(normalizedSkills::contains).count();
 
-            double score = (double) matchedSkills / skills.size();
+            double score = Math.round((double) matchedSkills / skills.size() * 10.0) / 10.0;
             domainScoreMap.put(domain, score);
         });
 
@@ -40,7 +40,22 @@ public class DomainUtil {
         TechnicalDomain primary = ranked.get(0).getKey();
         Double score = ranked.get(0).getValue();
 
-        return new DomainDto(primary, score);
+        if(primary.equals(TechnicalDomain.FRONTEND)) {
+            Map.Entry<TechnicalDomain, Double> entry = ranked.stream().filter(me -> me.getKey().equals(TechnicalDomain.JAVA_BACKEND)).findFirst().orElse(null);
+            if(entry != null) {
+                double javaScore = entry.getValue();
+                primary = javaScore >= 0.5 && score >= 0.5 ? TechnicalDomain.JAVA_FULLSTACK : primary;
+                score = (score + javaScore) / 2;
+            }
+        } else {
+            Map.Entry<TechnicalDomain, Double> entry = ranked.stream().filter(me -> me.getKey().equals(TechnicalDomain.FRONTEND)).findFirst().orElse(null);
+            if(entry != null && TechnicalDomain.JAVA_BACKEND.equals(primary)) {
+                double uiScore = Math.round(entry.getValue());
+                primary = uiScore >= 0.5 && score >= 0.5 ? TechnicalDomain.JAVA_FULLSTACK : primary;
+                score = (score + uiScore) / 2;
+            }
+        }
 
+        return new DomainDto(primary, score);
     }
 }

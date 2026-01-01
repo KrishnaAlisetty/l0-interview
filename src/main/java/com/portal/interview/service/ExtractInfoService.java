@@ -47,7 +47,6 @@ public class ExtractInfoService {
 
         try {
             CandidateProfile candidateProfile = mapper.readValue(data, CandidateProfile.class);
-            //Candidate candidate  = candidateRepository.save(candidateProfileMapper.toEntity(candidateProfile));
             return candidateProfileMapper.toEntity(candidateProfile);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

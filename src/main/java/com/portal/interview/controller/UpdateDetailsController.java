@@ -34,7 +34,6 @@ public class UpdateDetailsController {
 
         Candidate candidate = extractInfoService.extractResumeInfo(resumeText);
         domainResolverService.resolveAndUpdateDomain(candidate);
-        System.out.println(resumeText.contains("phanilanka32@gmail.com"));
         return "{\"status\": \"success\", \"message\": \"File uploaded successfully\"}";
     }
 }
