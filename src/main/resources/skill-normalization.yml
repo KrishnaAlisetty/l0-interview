@@ -1,0 +1,64 @@
+skills:
+  spring boot:
+    - springboot
+    - spring-boot
+    - spring boot
+
+  javascript:
+    - js
+    - javascript
+    - vanilla javascript
+    - vanila javascript
+
+  react:
+    - react
+    - reactjs
+    - react native
+
+  angular:
+    - angular
+    - angularjs
+    - angular-js
+
+  html:
+    - html
+    - html5
+
+  css:
+    - css
+    - css3
+    - bootstrap
+
+  java:
+    - java
+    - java8
+    - java11
+    - java17
+    - java21
+    - javase
+    - javaee
+    - j2ee
+
+  microservice:
+    - microservice
+    - microservices
+
+  rest:
+    - rest
+    - rest api
+    - restservice
+    - rest services
+    - restful web services
+    - rest services
+    - restful
+
+  maven:
+    - maven
+    - mvn
+    - mvn3
+
+  extjs:
+    -extjs
+    -ext js
+    -sencha
+    -sencha cmd

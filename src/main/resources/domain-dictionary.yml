@@ -1,0 +1,95 @@
+domains:
+  BACKEND:
+    core:
+      - java
+      - spring
+      - springboot
+      - rest
+      - microservices
+    supporting:
+      - hibernate
+      - jpa
+      - kafka
+      - sql
+      - redis
+    generic:
+      - git
+      - linux
+      - maven
+      - gradle
+
+  FRONTEND:
+    core:
+      - javascript
+      - typescript
+      - react
+      - angular
+      - vue
+      - jquery
+      - extjs
+    supporting:
+      - html
+      - css
+      - redux
+      - webpack
+      - vite
+    generic:
+      - git
+
+  DEVOPS:
+    core:
+      - docker
+      - kubernetes
+      - cicd
+    supporting:
+      - jenkins
+      - github actions
+      - terraform
+      - helm
+      - ansible
+    generic:
+      - linux
+      - git
+      - bash
+
+  CLOUD:
+    core:
+      - aws
+      - azure
+      - gcp
+    supporting:
+      - ec2
+      - s3
+      - lambda
+      - iam
+      - vpc
+    generic:
+      - linux
+      - git
+
+  DATA_ENGINEERING:
+    core:
+      - spark
+      - hadoop
+      - etl
+    supporting:
+      - kafka
+      - airflow
+      - snowflake
+      - bigquery
+    generic:
+      - sql
+      - python
+
+  QA_AUTOMATION:
+    core:
+      - selenium
+      - cypress
+      - playwright
+    supporting:
+      - junit
+      - testng
+      - postman
+      - rest assured
+    generic:
+      - git

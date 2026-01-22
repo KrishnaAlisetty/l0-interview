@@ -6,11 +6,9 @@
 package com.portal.interview.constants.domain.tech;
 
 public enum TechnicalDomain {
-        JAVA_BACKEND,
-        PYTHON_BACKEND,
-        JAVA_FULLSTACK,
-        FRONTEND,
+        BACKEND,
         FULLSTACK,
+        FRONTEND,
         DEVOPS,
         DATA_ENGINEERING,
         DATA_SCIENCE,
