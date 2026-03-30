@@ -49,7 +49,7 @@ public class DomainScoringService {
                 ).collect(Collectors.toList());
 
 
-        var backEnd = domains.stream().filter(v -> v.getKey() == TechnicalDomain.BACKEND && v.getValue() > 0.4).findFirst();
+        var backEnd = domains.stream().filter(v -> v.getKey() == TechnicalDomain.JAVA_BACKEND && v.getValue() > 0.4).findFirst();
         var frontEnd = domains.stream().filter(v -> v.getKey() == TechnicalDomain.FRONTEND && v.getValue() > 0.4).findFirst();
 
         if (backEnd.isPresent() && frontEnd.isPresent()) {

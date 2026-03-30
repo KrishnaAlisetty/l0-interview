@@ -20,7 +20,7 @@ public class CandidateService {
         this.candidateRepository = candidateRepository;
     }
 
-    public void saveCandidate(Candidate candidate) {
-        candidateRepository.save(candidate);
+    public Candidate saveCandidate(Candidate candidate) {
+        return candidateRepository.save(candidate);
     }
 }

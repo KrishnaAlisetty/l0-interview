@@ -26,4 +26,16 @@ public class ResumePromptBuilder {
                 resumeText
         );
     }
+
+    public String buildQuestionGenerationPrompt(Float experience, String primary_skills, String secondary_skills, int count) {
+        return ResumePromptTemplate.GENERATE_QUESTION_PROMPT.formatted(experience, primary_skills, secondary_skills, count);
+    }
+
+    public String buildBRMatchWithSkillSet(Float experience, String primary_skills, String secondary_skills, String job_description) {
+        return ResumePromptTemplate.BR_MATCH_PROMPT
+                .replace("{primary_skills}", primary_skills)
+                .replace("{secondary_skills}", secondary_skills)
+                .replace("{experience}", String.valueOf(experience))
+                .replace("{job_description}", job_description);
+    }
 }

@@ -26,7 +26,7 @@ public class ViewController {
         return "interviewer/index.html";
     }
 
-    @GetMapping("update")
+    @GetMapping("/update")
     public String updateForm() {
         return "candidate/update/index.html";
     }

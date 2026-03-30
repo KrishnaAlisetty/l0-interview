@@ -1,6 +1,6 @@
 package com.portal.interview.controller;
 
-import com.portal.interview.constants.domain.tech.TechnicalDomain;
+import com.portal.interview.dto.Response;
 import com.portal.interview.dto.UploadDetails;
 import com.portal.interview.entity.Candidate;
 import com.portal.interview.service.CandidateService;
@@ -8,17 +8,13 @@ import com.portal.interview.service.DomainScoringService;
 import com.portal.interview.service.ExtractInfoService;
 import com.portal.interview.service.ResumeParsingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/update")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UpdateDetailsController {
 
     private ResumeParsingService resumeParsingService;
@@ -34,23 +30,25 @@ public class UpdateDetailsController {
         this.candidateService = candidateService;
     }
 
+
     @PostMapping(value = "/details", consumes = "multipart/form-data")
-    public String handleFileUpload(UploadDetails uploadDetails) {
+    public ResponseEntity<Response> handleFileUpload(UploadDetails uploadDetails) {
         String resumeText = resumeParsingService.parseResume(
             uploadDetails.file()
         );
 
         Candidate candidate = extractInfoService.extractResumeInfo(resumeText);
-        List<String> primarySkills = Arrays.asList(candidate.getPrimarySkills().split(","));
-        List<String> secondarySkills = Arrays.asList(candidate.getSecondarySkills().split(","));
-        List<String> skills = new ArrayList<>(primarySkills);
-        skills.addAll(secondarySkills);
 
-        Map<TechnicalDomain, Double> domain =  domainScoringService.calculateAndUpdateTechDomainScore(skills);
-        candidate.setTechnicalDomainScore(domain);
+        Candidate candidate1 = candidateService.saveCandidate(candidate);
 
-        candidateService.saveCandidate(candidate);
+        extractInfoService.prepareQuestionsForCandidate(candidate.getExperience(), candidate.getPrimarySkills(), candidate.getSecondarySkills(), candidate1.getId());
 
-        return "{\"status\": \"success\", \"message\": \"File uploaded successfully\"}";
+        if(uploadDetails.brNumber() != null && !uploadDetails.brNumber().equals("")) {
+            extractInfoService.saveAndCalculateBRMatch(candidate.getExperience(), candidate.getPrimarySkills(), candidate.getSecondarySkills(), candidate1.getId(), uploadDetails.brNumber());
+        }
+        return new ResponseEntity<>(
+                new Response("success", "File submitted successfully, Data can be found on dashboard after some time", candidate1.getId()),
+                HttpStatus.OK
+        );
     }
 }

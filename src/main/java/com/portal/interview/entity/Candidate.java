@@ -6,12 +6,12 @@
 package com.portal.interview.entity;
 
 import com.portal.interview.constants.domain.business.BusinessDomain;
-import com.portal.interview.constants.domain.tech.TechnicalDomain;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "CANDIDATE")
@@ -32,26 +32,14 @@ public class Candidate {
     private String role;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "pass_key")
+    private String passKey;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "tech_domain_score",
-            joinColumns = @JoinColumn(name = "candidate_id")
-    )
-    @MapKeyEnumerated(EnumType.STRING)
-    @MapKeyColumn(name = "domain")
-    @Column(name = "score")
-    private Map<TechnicalDomain, Double> technicalDomainScore;
+    @OneToMany(mappedBy = "candidate")
+    private Set<Question> questions;
 
-    @ElementCollection(targetClass = BusinessDomain.class)
-    @CollectionTable(
-            name = "candidate_business_domains",
-            joinColumns = @JoinColumn(name = "candidate_id")
-    )
-    @Column(name = "business_domain")
-    @Enumerated(EnumType.STRING)
-    private List<BusinessDomain> businessDomains;
-
+    @OneToMany(mappedBy = "candidate")
+    private Set<BusinessRequirementEntity> businessRequirementEntities;
 
     public Long getId() {
         return id;
@@ -125,19 +113,32 @@ public class Candidate {
         this.secondarySkills = secondarySkills;
     }
 
-    public Map<TechnicalDomain, Double> getTechnicalDomainScore() {
-        return technicalDomainScore;
+    @PrePersist
+    public void generateLoginId(){
+        this.passKey = UUID.randomUUID().toString();
     }
 
-    public void setTechnicalDomainScore(Map<TechnicalDomain, Double> technicalDomainScore) {
-        this.technicalDomainScore = technicalDomainScore;
+    public String getPassKey() {
+        return passKey;
     }
 
-    public List<BusinessDomain> getBusinessDomains() {
-        return businessDomains;
+    public void setPassKey(String passKey) {
+        this.passKey = passKey;
     }
 
-    public void setBusinessDomains(List<BusinessDomain> businessDomains) {
-        this.businessDomains = businessDomains;
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
+    }
+
+    public Set<BusinessRequirementEntity> getBusinessRequirementEntities() {
+        return businessRequirementEntities;
+    }
+
+    public void setBusinessRequirementEntities(Set<BusinessRequirementEntity> businessRequirementEntities) {
+        this.businessRequirementEntities = businessRequirementEntities;
     }
 }

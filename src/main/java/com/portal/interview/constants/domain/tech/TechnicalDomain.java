@@ -6,7 +6,7 @@
 package com.portal.interview.constants.domain.tech;
 
 public enum TechnicalDomain {
-        BACKEND,
+        JAVA_BACKEND,
         FULLSTACK,
         FRONTEND,
         DEVOPS,
@@ -15,7 +15,9 @@ public enum TechnicalDomain {
         MACHINE_LEARNING,
         CLOUD,
         MOBILE,
+        BACKEND,
         QA_AUTOMATION,
         SECURITY,
-        UNKNOWN
+        UNKNOWN,
+        TEST
 }
