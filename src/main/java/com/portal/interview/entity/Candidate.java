@@ -34,6 +34,10 @@ public class Candidate {
     private LocalDateTime createdAt;
     @Column(name = "pass_key")
     private String passKey;
+    @Column(name = "interview_status")
+    private String interviewStatus;
+    @Column(name = "scheduled_date")
+    private LocalDateTime scheduledDate;
 
     @OneToMany(mappedBy = "candidate")
     private Set<Question> questions;
@@ -140,5 +144,21 @@ public class Candidate {
 
     public void setBusinessRequirementEntities(Set<BusinessRequirementEntity> businessRequirementEntities) {
         this.businessRequirementEntities = businessRequirementEntities;
+    }
+
+    public String getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(String interviewStatus) {
+        this.interviewStatus = interviewStatus;
+    }
+
+    public LocalDateTime getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(LocalDateTime scheduledDate) {
+        this.scheduledDate = scheduledDate;
     }
 }
