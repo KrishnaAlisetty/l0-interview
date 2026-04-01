@@ -6,7 +6,6 @@
 package com.portal.interview.service;
 
 import com.portal.interview.constants.domain.tech.TechnicalDomain;
-import com.portal.interview.repository.CandidateRepository;
 import com.portal.interview.util.DomainCalculate;
 import com.portal.interview.util.SkillNormalizer;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,7 +29,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String query = request.getURI().getQuery();
 
-        if(query ==null || !query.contains("token=")){
+        if (query == null || !query.contains("token=")) {
             return false;
         }
 

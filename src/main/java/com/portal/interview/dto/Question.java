@@ -10,4 +10,5 @@ public record Question(
         String skill,
         String difficulty,
         String category
-) {}
+) {
+}

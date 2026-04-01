@@ -29,13 +29,13 @@ public interface InterviewStatusRepository extends JpaRepository<InterviewDetail
     @Modifying
     @Transactional
     @Query("""
-    UPDATE InterviewDetails ip
-    SET ip.interviewStatus = :status,
-        ip.startedAt = :startedAt,
-        ip.interviewerEmail = :interviewerEmail
-    WHERE ip.jwt = :jwt
-      AND ip.interviewStatus = :expectedStatus
-""")
+                UPDATE InterviewDetails ip
+                SET ip.interviewStatus = :status,
+                    ip.startedAt = :startedAt,
+                    ip.interviewerEmail = :interviewerEmail
+                WHERE ip.jwt = :jwt
+                  AND ip.interviewStatus = :expectedStatus
+            """)
     int onInterviewerJoin(
             @Param("startedAt") LocalDateTime startedAt,
             @Param("interviewerEmail") String interviewerEmail,

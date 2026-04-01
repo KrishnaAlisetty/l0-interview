@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class DomainCalculate {
@@ -62,7 +61,7 @@ public class DomainCalculate {
         }
 
         double maxScore = profile.core().size() * CORE_WEIGHT +
-                profile.supporting().size() * SUPPORTING_WEIGHT ;
+                profile.supporting().size() * SUPPORTING_WEIGHT;
 
         return Math.round(score * 10.0) / maxScore;
     }

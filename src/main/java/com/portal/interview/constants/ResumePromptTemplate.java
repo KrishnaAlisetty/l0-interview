@@ -7,7 +7,9 @@ package com.portal.interview.constants;
 
 public class ResumePromptTemplate {
 
-    private  ResumePromptTemplate(){}
+    private ResumePromptTemplate() {
+    }
+
     public static final String SYSTEM_PROMPT = "You are a strict resume parsing engine.\n" +
             "\n" +
             "        Rules:\n" +

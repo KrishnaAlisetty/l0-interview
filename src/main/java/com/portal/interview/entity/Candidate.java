@@ -5,11 +5,9 @@
 
 package com.portal.interview.entity;
 
-import com.portal.interview.constants.domain.business.BusinessDomain;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,9 +22,9 @@ public class Candidate {
     private String name;
     private String email;
     private Float experience;
-    @Column(name ="primary_skills", length = 1000)
+    @Column(name = "primary_skills", length = 1000)
     private String primarySkills;
-    @Column(name ="secondary_skills", length = 1000)
+    @Column(name = "secondary_skills", length = 1000)
     private String secondarySkills;
     private String mobile;
     private String role;
@@ -118,7 +116,7 @@ public class Candidate {
     }
 
     @PrePersist
-    public void generateLoginId(){
+    public void generateLoginId() {
         this.passKey = UUID.randomUUID().toString();
     }
 

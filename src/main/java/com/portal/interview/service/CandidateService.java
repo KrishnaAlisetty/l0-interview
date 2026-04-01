@@ -32,17 +32,19 @@ public class CandidateService {
     }
 
     @Transactional
-    public void updateStatus(Long id, StatusUpdateRequest status) {
+    public Candidate updateStatus(Long id, StatusUpdateRequest status) {
         Candidate candidate = candidateRepository.findById(id)
                 .orElseThrow();
 
         Optional<CandidateStatus> candidateStatus = Arrays.stream(CandidateStatus.values()).filter(v -> v.name().equalsIgnoreCase(status.status())).findFirst();
 
-        if(candidateStatus.isPresent()) {
+        if (candidateStatus.isPresent()) {
             candidate.setInterviewStatus(candidateStatus.get().name());
-            if(candidateStatus.get().name().equalsIgnoreCase(CandidateStatus.SCHEDULE.name()) && status.date() != null && !status.date().equalsIgnoreCase("")) {
+            if (candidateStatus.get().name().equalsIgnoreCase(CandidateStatus.SCHEDULE.name()) && status.date() != null && !status.date().equalsIgnoreCase("")) {
                 candidate.setScheduledDate(LocalDateTime.parse(status.date()));
             }
         }
+
+        return candidate;
     }
 }

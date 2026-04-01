@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -47,6 +44,21 @@ public class ExtractInfoService {
     private QuestionsRepository questionsRepository;
 
     private BusinessRequirementRepository businessRequirementRepository;
+
+    private static Map<String, String> jobDescriptions = new HashMap<>();
+
+    static {
+        jobDescriptions.put("Java full stack", "The Tech Lead will provide design " +
+                "and delivery of a portal web application within the agile development lifecycle. " +
+                "The ideal candidate will be an experienced engineer with web application development with micro services and REST APIs " +
+                "in highly performant systems.  The candidate has at least 5 years of experience developing a web application. To be successful, " +
+                "the candidate needs to show experience with Java, springboot, Microservices and Javascript Frameworks, e.g., " +
+                "Angular, REACT etc. and REST APIs. The candidate should also have Cloud-based development experience.");
+
+        jobDescriptions.put("Python developer", "Write python code in an object oriented manner or in Prefect / Snowflake / Databricks to retrieve medical record from third party solution.Databricks: Mastery\n" +
+                "Kubernetes: Mastery\n" +
+                "Python: Mastery");
+    }
 
 
     @Autowired
@@ -82,10 +94,10 @@ public class ExtractInfoService {
                 resumePromptBuilder.buildQuestionGenerationPrompt(experience, primary_skills, secondary_skills, 5)
         ).call().entity(QuestionResponse.class);
 
-        List<Question>  questions = data.questions();
-        Set< com.portal.interview.entity.Question> questionSet = new HashSet<>();
+        List<Question> questions = data.questions();
+        Set<com.portal.interview.entity.Question> questionSet = new HashSet<>();
         Optional<Candidate> candidate = candidateRepository.findById(candidateId);
-        if(candidate.isPresent()) {
+        if (candidate.isPresent()) {
             questions.forEach(question -> {
                 com.portal.interview.entity.Question q = new com.portal.interview.entity.Question();
                 q.setCategory(question.category());
@@ -111,7 +123,7 @@ public class ExtractInfoService {
         ).call().entity(BRResponse.class);
 
         Optional<Candidate> candidate = candidateRepository.findById(candidateId);
-        if(candidate.isPresent()) {
+        if (candidate.isPresent()) {
             BusinessRequirementEntity businessRequirementEntity = new BusinessRequirementEntity();
             businessRequirementEntity.setBrId(brNumber);
             businessRequirementEntity.setStrengths(brResponse.strengths().stream().collect(Collectors.joining(",")));

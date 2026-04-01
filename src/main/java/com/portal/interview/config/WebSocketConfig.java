@@ -16,10 +16,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
     private final SignalingHandler signalingHandler;
+
     public WebSocketConfig(SignalingHandler signalingHandler, JwtHandshakeInterceptor jwtHandshakeInterceptor) {
         this.signalingHandler = signalingHandler;
         this.jwtHandshakeInterceptor = jwtHandshakeInterceptor;
     }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(signalingHandler, "/signal")

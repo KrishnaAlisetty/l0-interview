@@ -10,17 +10,16 @@ import com.portal.interview.constants.Roles;
 import com.portal.interview.dto.LoginRequest;
 import com.portal.interview.entity.Candidate;
 import com.portal.interview.entity.InterviewDetails;
+import com.portal.interview.projetions.CandidateAuthView;
 import com.portal.interview.repository.CandidateRepository;
 import com.portal.interview.service.InterviewDetailsService;
 import com.portal.interview.service.JwtService;
 import com.portal.interview.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -30,6 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     @Autowired
@@ -50,7 +50,7 @@ public class AuthController {
         Candidate candidate;
 
         boolean roleMatch = Arrays.stream(Roles.values()).anyMatch(c -> c.getRole().equalsIgnoreCase(role));
-        if(!roleMatch) {
+        if (!roleMatch) {
             throw new IllegalStateException("Role doesn't match");
         }
 
@@ -63,7 +63,7 @@ public class AuthController {
 
         boolean isInterviewOngoing = interviewProcesses.stream().anyMatch(v -> v.getInterviewStatus().equals(InterviewStatus.ON_GOING));
         InterviewDetails interviewDetails = interviewProcesses.stream().filter(v -> v.getInterviewStatus().equals(InterviewStatus.INITIATED)).findFirst().orElse(null);
-        if(isInterviewOngoing) {
+        if (isInterviewOngoing) {
             throw new IllegalStateException("Interview is happen with candidate who is associated with provided email id");
         }
         if (interviewDetails != null) {
@@ -74,7 +74,7 @@ public class AuthController {
         }
 
         String roomId = roomService.createRoomId();
-        String token  = jwtService.generateToken(candidate.getId().toString(), email, role, roomId);
+        String token = jwtService.generateToken(candidate.getId().toString(), email, role, roomId);
 
         interviewDetails = new InterviewDetails();
         interviewDetails.setCandidate(candidate);
@@ -94,5 +94,17 @@ public class AuthController {
 
         model.addAttribute("room_id", roomId);
         return ResponseEntity.ok(Map.of("token", token, "roomId", roomId));
+    }
+
+
+    @GetMapping("/{token}")
+    public ResponseEntity<?> authenticateUser(@PathVariable("token") String token) {
+        Optional<CandidateAuthView> candidate = candidateRepository.findCandidateByPassKey(token);
+
+        if (candidate.isPresent()) {
+            return ResponseEntity.ok().body(candidate);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+        }
     }
 }

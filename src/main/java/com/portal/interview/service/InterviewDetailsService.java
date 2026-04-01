@@ -25,7 +25,7 @@ public class InterviewDetailsService {
         return interviewStatusRepository.findInitiatedStatusByCandidateOrInterviewer(email, List.of(InterviewStatus.INITIATED, InterviewStatus.ON_GOING));
     }
 
-    public void create(InterviewDetails interviewDetails){
+    public void create(InterviewDetails interviewDetails) {
         interviewStatusRepository.save(interviewDetails);
     }
 

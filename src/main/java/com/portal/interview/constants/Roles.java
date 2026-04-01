@@ -11,6 +11,7 @@ public enum Roles {
     INTERVIEWER("interviewer");
 
     private String role;
+
     Roles(String role) {
         this.role = role;
     }
