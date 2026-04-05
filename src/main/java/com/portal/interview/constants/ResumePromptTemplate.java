@@ -7,9 +7,6 @@ package com.portal.interview.constants;
 
 public class ResumePromptTemplate {
 
-    private ResumePromptTemplate() {
-    }
-
     public static final String SYSTEM_PROMPT = "You are a strict resume parsing engine.\n" +
             "\n" +
             "        Rules:\n" +
@@ -19,7 +16,6 @@ public class ResumePromptTemplate {
             "        - Missing values must be null\n" +
             "        If a field is reasonably inferable from the resume, populate it.\n" +
             "        If not present, return null.";
-
     public static final String USER_PROMPT = "Extract candidate metadata from the resume below.\n" +
             "\n" +
             "        Return JSON strictly in this format:\n" +
@@ -28,7 +24,6 @@ public class ResumePromptTemplate {
             "\n" +
             "        Resume:\n" +
             "        %s";
-
     public static final String GENERATE_QUESTION_PROMPT = "You are a senior technical interviewer designing real-world interview questions.\n" +
             "\n" +
             "Candidate Profile:\n" +
@@ -63,7 +58,6 @@ public class ResumePromptTemplate {
             "    }\n" +
             "  ]\n" +
             "}";
-
     public static final String BR_MATCH_PROMPT = "You are an expert technical interviewer and hiring evaluator.\n" +
             "\n" +
             "Your task is to evaluate how well a candidate matches a given job requirement.\n" +
@@ -107,4 +101,7 @@ public class ResumePromptTemplate {
             "  \"gaps\": [\"list of missing or weak areas\"],\n" +
             "  \"summary\": \"short explanation of why this score was given\"\n" +
             "}";
+
+    private ResumePromptTemplate() {
+    }
 }

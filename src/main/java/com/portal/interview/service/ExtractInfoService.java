@@ -31,20 +31,6 @@ import java.util.stream.Collectors;
 @Service
 public class ExtractInfoService {
 
-    private CandidateRepository candidateRepository;
-
-    private ChatClient chatClient;
-
-    private ResumePromptBuilder resumePromptBuilder = new ResumePromptBuilder();
-
-    private ObjectMapper mapper = new ObjectMapper();
-
-    private CandidateProfileMapper candidateProfileMapper;
-
-    private QuestionsRepository questionsRepository;
-
-    private BusinessRequirementRepository businessRequirementRepository;
-
     private static Map<String, String> jobDescriptions = new HashMap<>();
 
     static {
@@ -59,6 +45,14 @@ public class ExtractInfoService {
                 "Kubernetes: Mastery\n" +
                 "Python: Mastery");
     }
+
+    private CandidateRepository candidateRepository;
+    private ChatClient chatClient;
+    private ResumePromptBuilder resumePromptBuilder = new ResumePromptBuilder();
+    private ObjectMapper mapper = new ObjectMapper();
+    private CandidateProfileMapper candidateProfileMapper;
+    private QuestionsRepository questionsRepository;
+    private BusinessRequirementRepository businessRequirementRepository;
 
 
     @Autowired

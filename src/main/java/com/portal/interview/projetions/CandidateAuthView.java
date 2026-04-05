@@ -8,10 +8,13 @@ package com.portal.interview.projetions;
 import java.util.Set;
 
 public interface CandidateAuthView {
+    Long getId();
+
+    Set<QuestionView> getQuestions();
+
+    String getName();
+
     interface QuestionView {
         String getQuestion();
     }
-    Long getId();
-    Set<QuestionView> getQuestions();
-    String getName();
 }

@@ -7,10 +7,6 @@ package com.portal.interview.constants;
 
 public class ResumeSchemaConstants {
 
-    private ResumeSchemaConstants() {
-
-    }
-
     public static final String CANDIDATE_SCHEMA = "{\n" +
             "          \"name\": null,\n" +
             "          \"email\": null,\n" +
@@ -30,4 +26,8 @@ public class ResumeSchemaConstants {
             "          \"resumeSummary\": null,\n" +
             "          \"confidenceScore\": null\n" +
             "        }";
+
+    private ResumeSchemaConstants() {
+
+    }
 }

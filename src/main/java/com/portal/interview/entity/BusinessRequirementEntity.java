@@ -12,6 +12,9 @@ import jakarta.persistence.*;
 @Table(name = "business_requirement")
 public class BusinessRequirementEntity {
 
+    String strengths;
+    String gaps;
+    String summary;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -19,10 +22,6 @@ public class BusinessRequirementEntity {
     private String brId;
     @Column(name = "req_match")
     private Integer percentage;
-    String strengths;
-    String gaps;
-    String summary;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candidate_id")
     @JsonIgnore

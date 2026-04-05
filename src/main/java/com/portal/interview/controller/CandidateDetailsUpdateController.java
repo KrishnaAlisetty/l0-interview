@@ -65,12 +65,12 @@ public class CandidateDetailsUpdateController {
         Candidate candidate = candidateService.updateStatus(id, request);
         if (request.status().equalsIgnoreCase(CandidateStatus.SCHEDULE.name())) {
             String url = userAuthTokenService.getInterviewLink(candidate);
-            String body = " Hello" + candidate.getName() +",\n" +
+            String body = " Hello" + candidate.getName() + ",\n" +
                     "\n" +
-                    "            You have been invited for an interview on "+  request.date() +".\n" +
+                    "            You have been invited for an interview on " + request.date() + ".\n" +
                     "\n" +
-                    "            Click the link below to start:\n"  +
-                    "            "+ url +"\n" +
+                    "            Click the link below to start:\n" +
+                    "            " + url + "\n" +
                     "\n" +
                     "            Regards,\n" +
                     "            Interview Team";

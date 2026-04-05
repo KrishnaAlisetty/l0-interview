@@ -26,16 +26,6 @@ public class DomainScoringService {
         this.domainCalculate = domainCalculate;
     }
 
-    public Map<TechnicalDomain, Double> calculateAndUpdateTechDomainScore(List<String> techSkills) {
-
-        Set<String> normalizedSkills = techSkills.stream().map(skillNormalizer::normalize).collect(Collectors.toSet());
-
-        Map<TechnicalDomain, Double> scores = domainCalculate.scoreDomains(normalizedSkills);
-
-        return resolveDomain(scores);
-
-    }
-
     private static Map<TechnicalDomain, Double> resolveDomain(Map<TechnicalDomain, Double> scores) {
         Map<TechnicalDomain, Double> domain = new HashMap<>();
 
@@ -57,6 +47,16 @@ public class DomainScoringService {
             domain.put(domains.get(0).getKey(), domains.get(0).getValue());
         }
         return domain;
+    }
+
+    public Map<TechnicalDomain, Double> calculateAndUpdateTechDomainScore(List<String> techSkills) {
+
+        Set<String> normalizedSkills = techSkills.stream().map(skillNormalizer::normalize).collect(Collectors.toSet());
+
+        Map<TechnicalDomain, Double> scores = domainCalculate.scoreDomains(normalizedSkills);
+
+        return resolveDomain(scores);
+
     }
 
 

@@ -20,7 +20,7 @@ public class UserAuthTokenService {
 
     public String getInterviewLink(Candidate candidate) {
 
-        String url = "http://localhost:5173/interview/"+candidate.getPassKey();
+        String url = "http://localhost:5173/interview/" + candidate.getPassKey();
         return url;
     }
 }

@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="basic.css">
+    <link href="basic.css" rel="stylesheet">
 </head>
 <body>
-<form id="loginForm" class="form-container">
+<form class="form-container" id="loginForm">
     <div class="title">
         <h2 class="form-title">Login</h2>
     </div>
     <div class="form-group">
         <label for="email">Candidate Email</label>
-        <input type="email" id="email" placeholder="Email" required />
+        <input id="email" placeholder="Email" required type="email"/>
     </div>
     <div class="form-group" id="interviewerEmailDiv">
         <label for="email">Interviewer Email</label>
-        <input type="email" id="interviewerEmail" placeholder="Email" required />
+        <input id="interviewerEmail" placeholder="Email" required type="email"/>
     </div>
-    <div class="form-group" >
+    <div class="form-group">
         <label for="role">Role</label>
-        <select id="role" class="custom-select">
+        <select class="custom-select" id="role">
             <option value="CANDIDATE">Candidate</option>
             <option value="INTERVIEWER">Interviewer</option>
         </select>
